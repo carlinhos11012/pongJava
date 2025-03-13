@@ -57,17 +57,8 @@ public class Ball extends GameObject {
         }
     }
 
-
     public void restart() {
         pos_x = init_pos_x;
         pos_y = init_pos_y;
-    }
-
-    public void setDirection_x(boolean direction_x) {
-        this.direction_x = direction_x;
-    }
-
-    public void setDirection_y(boolean direction_y) {
-        this.direction_y = direction_y;
     }
 }

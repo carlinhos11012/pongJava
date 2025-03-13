@@ -6,11 +6,11 @@ public class Enemy extends GameObject {
     }
 
     public void move(int ball_pos_y, int screenHeight) {
-        int direction = (int) Math.signum(ball_pos_y - (getPos_y() + (float) getHeight() / 2));
-        int newY = getPos_y() + direction * getSpeed();
+        int direction = (int) Math.signum(ball_pos_y - (pos_y + (float) height / 2));
+        int newY = pos_y + direction * speed;
 
-        if (newY > 0 && newY + getHeight() < screenHeight) {
-            setPos_y(newY);
+        if (newY > 0 && newY + height < screenHeight) {
+            this.pos_y = newY;
         }
     }
 
