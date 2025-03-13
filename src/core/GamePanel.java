@@ -1,29 +1,41 @@
+package core;
+
+import entities.Ball;
+import entities.Enemy;
+import entities.Player;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseListener;
 
 public class GamePanel extends JPanel implements Runnable {
-    // SCREEN SETTINGS
-    final int originalTileSize = 16; // 16x16 tile
-    final int scale = 3; // scale ratio for the tile size
 
-    final int tileSize = originalTileSize * scale; // 48 tile
-    final int maxScreenCol = 16;
-    final int maxScreenRow = 12;
-    final int screenWidth = tileSize * maxScreenCol; // 768 pixels
-    final int screenHeight = tileSize * maxScreenRow; // 576 pixels
+    // Screen
+    private final int originalTileSize = 16;
+    private final int scale = 3;
+    private final int tileSize = originalTileSize * scale;
+    private final int maxScreenCol = 16;
+    private final int maxScreenRow = 12;
+    private final int screenWidth = tileSize * maxScreenCol;
+    private final int screenHeight = tileSize * maxScreenRow;
+
 
     // FPS
-    int fps = 240;
+    private final int initialFps = 240;
+    private int fps = initialFps;
+    private static final int MAX_FPS = 1000;
 
-    KeyHandler keyH = new KeyHandler();
-    MouseHandler mouseH = new MouseHandler();
-    Thread gameThread;
+    // Handlers
+    private final KeyHandler keyH = new KeyHandler();
+    private final MouseHandler mouseH = new MouseHandler();
+
+    // Thread
+    private Thread gameThread;
 
     // Entities
-    Player player;
-    Ball ball;
-    Enemy enemy;
+    private final Player player;
+    private final Ball ball;
+    private final Enemy enemy;
+
 
 
     public GamePanel() {
@@ -78,9 +90,9 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
 
-        movePlayer();
+        player.move(keyH, mouseH, screenHeight);
 
-        ballHitCheck();
+        ball.checkCollision(player, enemy, this);
 
         ball.move();
         enemy.move(ball.getPos_y(), screenHeight);
@@ -98,45 +110,21 @@ public class GamePanel extends JPanel implements Runnable {
 
         g2d.setColor(Color.RED);
         g2d.fillRect(ball.getPos_x(), ball.getPos_y(), ball.getWidth(), ball.getHeight());
-
-        g2d.dispose();
     }
 
-    private void movePlayer() {
-        // Player's movement
-        if (keyH.upPressed) {
-            if (player.getPos_y() >= 0) {
-                player.move((byte) 1);
-            }
-        } else if (keyH.downPressed) {
-            if (player.getPos_y() + player.getHeight() <= screenHeight) {
-                player.move((byte) -1);
-            }
-        }else{
-            if(mouseH.mouseY > 0 && mouseH.mouseY < screenHeight - player.getHeight()) {
-                player.setPos_y(mouseH.mouseY);
-            }
-        }
+    public void increaseFPS(){
+        this.fps = Math.min(fps + 20, MAX_FPS);
+    }
+    public void resetFPS(){
+        this.fps = initialFps;
     }
 
-    private void ballHitCheck(){
-        // Ball hits ceiling or floor
-        if (ball.getPos_y() <= 0) {
-            ball.setDirection_y(true);
-        } else if (ball.getPos_y() >= screenHeight - tileSize / 4) {
-            ball.setDirection_y(false);
-        }
-
-        // Ball hits player | Ball hits enemy | Ball hits "goal"
-        if ((ball.getPos_x() > player.getPos_x() && ball.getPos_x() < player.getPos_x() + player.getWidth()) && (ball.getPos_y() > player.getPos_y() && ball.getPos_y() < player.getPos_y() + player.getHeight())) {
-            ball.setDirection_x(true);
-            fps += 20;
-        }else if (ball.getPos_x() + ball.getWidth() >= enemy.getPos_x() && ball.getPos_y() >= enemy.getPos_y() && ball.getPos_y() <= enemy.getPos_y() + enemy.getHeight()) {
-            ball.setDirection_x(false);
-            fps += 20;
-        }else if (ball.getPos_x() < 0 || ball.getPos_x() >= screenWidth){
-            ball.restart();
-            fps = 240;
-        }
+    public int getScreenWidth() {
+        return screenWidth;
     }
+
+    public int getScreenHeight() {
+        return screenHeight;
+    }
+
 }
