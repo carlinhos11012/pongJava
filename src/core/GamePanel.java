@@ -100,17 +100,18 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         Graphics2D g2d = (Graphics2D) g;
 
-        g2d.setColor(Color.WHITE);
+        // Desenha o jogador
+        Renderer.drawObject(g2d, player, Color.WHITE);
 
-        g2d.fillRect(player.getPos_x(), player.getPos_y(), player.getWidth(), player.getHeight());
-        g2d.fillRect(enemy.getPos_x(), enemy.getPos_y(), enemy.getWidth(), enemy.getHeight());
+        // Desenha o inimigo
+        Renderer.drawObject(g2d, enemy, Color.WHITE);
 
-        g2d.setColor(Color.RED);
-        g2d.fillRect(ball.getPos_x(), ball.getPos_y(), ball.getWidth(), ball.getHeight());
+        // Desenha a bola
+        Renderer.drawObject(g2d, ball, Color.RED);
     }
+
 
     public void increaseFPS(){
         this.fps = Math.min(fps + 20, MAX_FPS);
